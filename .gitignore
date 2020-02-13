@@ -1,0 +1,15 @@
+# Angular
+./ui-data-table/dist
+./ui-data-table/tmp
+./ui-data-table/out-tsc
+./ui-data-table/chrome-profiler-events*.json
+./ui-data-table/speed-measure-plugin*.json
+
+# Node
+./api/.env
+./api/nodemon.json
+./api/.vscode
+./api/.nyc_output
+
+# dependencies
+node_modules*

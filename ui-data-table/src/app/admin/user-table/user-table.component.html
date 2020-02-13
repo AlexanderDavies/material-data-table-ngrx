@@ -1,0 +1,47 @@
+  <!-- filtering -->
+
+  <mat-progress-bar mode="indeterminate" *ngIf="(usersUiState$ | async ).loading"></mat-progress-bar>
+
+  <mat-form-field>
+    <mat-label>Filter</mat-label>
+    <input matInput placeholder="search" #input>
+    <mat-error *ngIf="(usersUiState$ | async ).errorMessage">{{(usersUiState$ | async ).errorMessage}}</mat-error>
+  </mat-form-field>
+
+  <div class="mat-elevation-z8 container">
+
+    <!-- data table -->
+    <mat-table [dataSource]="users$" matSort atSortActive="email" matSortDisableClear matSortDirection="asc">
+
+      <!-- email column -->
+      <ng-container matColumnDef="email">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>EMAIL</mat-header-cell>
+        <mat-cell *matCellDef="let user">{{user.email}}</mat-cell>
+      </ng-container>
+
+      <!-- first name column -->
+      <ng-container matColumnDef="firstName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>First Name</mat-header-cell>
+        <mat-cell *matCellDef="let user">{{user.firstName}}</mat-cell>
+      </ng-container>
+
+      <!-- surname column -->
+      <ng-container matColumnDef="surname">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>SURNAME</mat-header-cell>
+        <mat-cell *matCellDef="let user">{{user.surname}}</mat-cell>
+      </ng-container>
+
+      <!-- role Column -->
+      <ng-container matColumnDef="role">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>role</mat-header-cell>
+        <mat-cell *matCellDef="let user">{{user.role}}</mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+
+    <!-- pagination -->
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [length]="(usersUiState$ | async).userCount"
+      [pageSize]="defaultPageSize"></mat-paginator>
+  </div>
