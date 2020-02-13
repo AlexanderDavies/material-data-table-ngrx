@@ -1,0 +1,20 @@
+.progress-bar-container {
+  height: 0.8rem;
+}
+
+.error-container {
+  background-color: #f7c7c7;
+  border-left: 3px solid #a31515;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem;
+  box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.3);
+
+  .error-message {
+    color: #a31515;
+    font-size: 1rem;
+    margin: 0 !important;
+  }
+
+}

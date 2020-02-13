@@ -39,9 +39,6 @@ export class UserTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.store.dispatch(userActions.getUsers(this.onLoadQuery));
-    this.usersUiState$.subscribe((state) => {
-      console.log(state);
-    });
   }
 
   ngAfterViewInit() {

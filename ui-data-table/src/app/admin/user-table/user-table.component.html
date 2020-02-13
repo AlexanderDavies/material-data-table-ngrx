@@ -1,6 +1,12 @@
   <!-- filtering -->
+  <!-- added fixed container to improve UI experience and ensure table is not pushed down -->
+  <div class="progress-bar-container">
+    <mat-progress-bar mode="indeterminate" *ngIf="(usersUiState$ | async ).loading"></mat-progress-bar>
+  </div>
 
-  <mat-progress-bar mode="indeterminate" *ngIf="(usersUiState$ | async ).loading"></mat-progress-bar>
+  <div class="error-container" *ngIf="(usersUiState$ | async).errorMessage">
+    <p class="error-message">{{(usersUiState$ | async).errorMessage}}</p>
+  </div>
 
   <mat-form-field>
     <mat-label>Filter</mat-label>
@@ -8,7 +14,7 @@
     <mat-error *ngIf="(usersUiState$ | async ).errorMessage">{{(usersUiState$ | async ).errorMessage}}</mat-error>
   </mat-form-field>
 
-  <div class="mat-elevation-z8 container">
+  <div class="mat-elevation-z8">
 
     <!-- data table -->
     <mat-table [dataSource]="users$" matSort atSortActive="email" matSortDisableClear matSortDirection="asc">
