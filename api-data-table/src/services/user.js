@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const escRegex = require('escape-regexp');
 
 //service to create users in mongodb
 exports.createUser = async ({email, firstName, surname, role}) => {
@@ -38,7 +39,7 @@ exports.getUsers = async ({
     if (filter !== "") {
       filterQuery = {
         $or: [
-          { email: new RegExp("^" + filter, "i") },
+          { email: new RegExp("^" + escRegex(filter), "i") },
           { firstName: new RegExp("^" + filter, "i") },
           { surname: new RegExp("^" + filter, "i") },
           { role: new RegExp("^" + filter, "i") }

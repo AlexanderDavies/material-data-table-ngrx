@@ -1,25 +1,47 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AdminComponent } from './admin.component';
 
-describe('AdminComponent', () => {
-  let component: AdminComponent;
-  let fixture: ComponentFixture<AdminComponent>;
+import { preventTestBedResetForComponentCompilation } from '../shared/utils/tests/test.common';
+import { TestUtils, ICompiledComponent } from '../shared/utils/tests/test-utils';
+import { RouterTestingModule } from '@angular/router/testing';
+import { CommonModule } from '@angular/common';
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ AdminComponent ]
+describe('AdminComponent', () => {
+
+  let compiled: ICompiledComponent<AdminComponent>;
+
+  preventTestBedResetForComponentCompilation(() => {
+    TestUtils.configureComponentWithStoreTestingModule({
+      declarations: [
+        AdminComponent,
+      ],
+      imports: [
+        CommonModule,
+        RouterTestingModule
+      ]
     })
     .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AdminComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    compiled = TestUtils.createComponent(AdminComponent);
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(compiled.instance).toBeTruthy();
   });
+
+  it('should render the app-header component', () => {
+    compiled.fixture.detectChanges();
+    expect(compiled.fixture.nativeElement.querySelector('app-header')).toBeTruthy();
+  });
+
+  it('should have a body element', () => {
+    expect(compiled.fixture.nativeElement.querySelector('.body')).toBeTruthy();
+  });
+
+  it('should render the data table component', () => {
+    expect(compiled.fixture.nativeElement.querySelector('app-user-table')).toBeTruthy();
+  });
+
 });

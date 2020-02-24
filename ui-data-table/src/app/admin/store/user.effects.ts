@@ -8,19 +8,16 @@ import { UserService } from '../../shared/services/user.service';
 
 @Injectable()
 export class UserEffects {
-  constructor(
-    private readonly actions$: Actions,
-    private readonly userService: UserService
-  ) {}
+  constructor(private readonly actions$: Actions, private readonly userService: UserService) {}
 
   getUsers$ = createEffect(() =>
     this.actions$.pipe(
       ofType(getUsers),
       switchMap(action =>
         this.userService.getUsers(action.dataTableQuery).pipe(
-          map((res) => getUsersSuccess(res)),
+          map(res => getUsersSuccess(res)),
           catchError(err => {
-            return of(getUsersError({errorMessage: err.message}));
+            return of(getUsersError({ errorMessage: err.message }));
           })
         )
       )

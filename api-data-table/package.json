@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "mocha --recursive ./src/test",
-    "test:debug": "mocha --inspect-brk=9229 --recursive ./src/test",
+    "test:debug": "mocha --inspect=9229 --recursive ./src/test",
     "coverage": "nyc npm run test",
     "start": "node ./src/server.js",
     "start:server": "nodemon ./src/server.js --config nodemon.json",
@@ -16,6 +16,7 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
+    "escape-regexp": "0.0.1",
     "express": "^4.17.1",
     "express-validator": "^6.4.0",
     "lodash": "^4.17.15",
@@ -31,8 +32,13 @@
     "supertest": "^4.0.2"
   },
   "nyc": {
+    "branches": 90,
+    "lines": 90,
+    "functions": 90,
+    "statements": 90,
     "exclude": [
-      "**/test/**"
+      "**/test/**",
+      "/server.js"
     ]
   }
 }

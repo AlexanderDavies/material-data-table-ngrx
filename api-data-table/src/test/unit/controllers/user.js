@@ -1,49 +1,52 @@
-const expect = require("chai").expect
-const sinon = require("sinon");
-const _ = require('lodash');
+const expect = require('chai').expect;
+const sinon = require('sinon');
 
-const userService = require("../../../services/user");
-const userController = require("../../../controllers/user");
-const validateErrorsUtil = require("../../../utils/validate-errors");
+const userService = require('../../../services/user');
+const userController = require('../../../controllers/user');
+const validateErrorsUtil = require('../../../utils/validate-errors');
 
-describe("Controllers: User", function() {
+describe('Controllers: User', function() {
   let createUserStub;
   let getUsersStub;
   let getUserCountStub;
-  const _user = {
-    _id: 1,
-    email: "test@test.com.au",
-    firstName: "Homer",
-    surname: "Simpson"
-  };
-  const _req = {
-    body: {
-      user: _user
-    }
-  };
-  const _res = {
-    _status: null,
-    _user: null,
-    _message: null,
-    status: function(status) {
-      this._status = status;
-      return this;
-    },
-    json: function({ message, user, }) {
-      this._message = message;
-      this._user = user;
-      return this;
-    }
-  };
-  const next = err => {
-    throw err;
-  };
+  let user;
+  let req;
+  let res;
+  let next;
 
   beforeEach(() => {
-    createUserStub = sinon.stub(userService, "createUser");
-    getUsersStub = sinon.stub(userService, "getUsers");
-    getUserCountStub = sinon.stub(userService, "getUserCount");
-    validateErrorsStub = sinon.stub(validateErrorsUtil, "validateErrors");
+    createUserStub = sinon.stub(userService, 'createUser');
+    getUsersStub = sinon.stub(userService, 'getUsers');
+    getUserCountStub = sinon.stub(userService, 'getUserCount');
+    validateErrorsStub = sinon.stub(validateErrorsUtil, 'validateErrors');
+    user = {
+      _id: 1,
+      email: 'test@test.com.au',
+      firstName: 'Homer',
+      surname: 'Simpson'
+    };
+    req = {
+      body: {
+        user: user
+      }
+    };
+    res = {
+      _status: null,
+      _user: null,
+      _message: null,
+      status: function(status) {
+        this._status = status;
+        return this;
+      },
+      json: function({ message, user }) {
+        this._message = message;
+        this._user = user;
+        return this;
+      }
+    };
+    next = err => {
+      throw err;
+    };
   });
 
   afterEach(() => {
@@ -53,76 +56,64 @@ describe("Controllers: User", function() {
     validateErrorsStub.restore();
   });
 
-  describe("Create User Controller", function() {
-    it("Should return status 200, user object and message 'user created'", async function() {
-      const req = _.cloneDeep(_req);
-      const res = _.cloneDeep(_res);
-
-      createUserStub.resolves(_user);
+  describe('Create User Controller', function() {
+    it("should return status 200, user object and message 'user created'", async () => {
+      createUserStub.resolves(user);
       validateErrorsStub.returns(true);
 
       const result = await userController.createUser(req, res, next);
       expect(result._status).to.equal(200);
-      expect(result._user).to.equal(_user);
-      expect(result._message).to.equal("user created");
+      expect(result._user).to.equal(user);
+      expect(result._message).to.equal('user created');
     });
 
-    it("should return an error if middleware identified errors", async function() {
-      try {
-        const req = _.cloneDeep(_req);
-        const res = _.cloneDeep(_res);
-
-        validateErrorsStub.throws(new Error("user not found"));
-        await userController.createUser(req, res, next)
-      } catch (err) {
-        expect(err.message).to.equal("user not found");
-      }
+    it('should return an error if middleware identified errors', done => {
+      validateErrorsStub.callsFake(() => {
+        throw new Error('user already exists');
+      });
+      userController.createUser(req, res, next).catch(err => {
+        expect(err.message).to.equal('user already exists');
+        done();
+      });
     });
 
-    it("should return an error if user was unable to be created", async function() {
-      try {
-        const req = _.cloneDeep(_req);
-        const res = _.cloneDeep(_res);
-
-        createUserStub.throws(new Error('unable to create user'));
-        await userController.createUser(req, res, next);
-
-      } catch (err) {
-        expect(err.message).to.equal('unable to create user')
-      }
+    it('should return an error if user was unable to be created', done => {
+      createUserStub.throws(new Error('unable to create user'));
+      userController.createUser(req, res, next).catch(err => {
+        expect(err.message).to.equal('unable to create user');
+        done();
+      });
     });
-  });
 
-  describe('Get Users Controller', function() {
+    describe('Get Users Controller', function() {
+      beforeEach(() => {
+        res = {
+          _status: null,
+          _users: null,
+          _userCount: null,
+          status: function(status) {
+            this._status = status;
+            return this;
+          },
+          json: function({ users, userCount }) {
+            this._users = users;
+            this._userCount = userCount;
+            return this;
+          }
+        };
+        req['query'] = {};
+      });
 
-    it('should return the users in an array and the user count', async function(){
-      const req = _.cloneDeep(_req);
-      const res = {
-        _status: null,
-        _users: null,
-        _userCount: null,
-        status: function(status) {
-          this._status = status;
-          return this;
-        },
-        json: function({ users, userCount}) {
-          this._users = users;
-          this._userCount = userCount;
-          return this;
-        }
-      };
+      it('should return the users in an array and the user count', async () => {
+        getUsersStub.returns([user]);
+        getUserCountStub.returns(1);
 
-      req['query'] = {}
+        const result = await userController.getUsers(req, res, next);
 
-      getUsersStub.returns([_user]);
-      getUserCountStub.returns(1);
-
-      const result = await userController.getUsers(req, res, next);
-
-      expect(result._status).to.equal(200);
-      expect(result._users).to.deep.equal([_user]);
-      expect(result._userCount).to.equal(1);
-
+        expect(result._status).to.equal(200);
+        expect(result._users).to.deep.equal([user]);
+        expect(result._userCount).to.equal(1);
+      });
     });
   });
 });

@@ -5,9 +5,9 @@ import { select, Store } from '@ngrx/store';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { Observable, fromEvent, Subscription, merge } from 'rxjs';
 
-import {getUsers, getUsersUiState} from '../store/user.reducer';
+import { getUsers, getUsersUiState } from '../store/user.reducer';
 import * as userActions from '../store/user.actions';
-import {User} from '../../shared/models/user.model';
+import { User } from '../../shared/models/user.model';
 import { DataTableQuery } from 'src/app/shared/models/data-table-query.model';
 
 @Component({
@@ -15,25 +15,28 @@ import { DataTableQuery } from 'src/app/shared/models/data-table-query.model';
   templateUrl: './user-table.component.html',
   styleUrls: ['./user-table.component.scss']
 })
-
 export class UserTableComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns: string[] = ['email', 'firstName', 'surname', 'role'];
   defaultPageSize = 10;
   users$: Observable<Array<User>> = this.store.pipe(select(getUsers));
-  usersUiState$: Observable<{loading: boolean, userCount: number , errorMessage: string}> = this.store.pipe(select(getUsersUiState));
+  usersUiState$: Observable<{
+    loading: boolean;
+    userCount: number;
+    errorMessage: string;
+  }> = this.store.pipe(select(getUsersUiState));
   sortSub: Subscription;
   watchChangesSub: Subscription;
   onLoadQuery = new DataTableQuery({
-      filter: '',
-      sortColumn: 'email',
-      sortDirection: 'asc',
-      pageIndex: '1',
-      pageSize: this.defaultPageSize.toString()
+    filter: '',
+    sortColumn: 'email',
+    sortDirection: 'asc',
+    pageIndex: '1',
+    pageSize: this.defaultPageSize.toString()
   });
 
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
-  @ViewChild('input', {static: false}) input: ElementRef;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild('input', { static: false }) input: ElementRef;
 
   constructor(private store: Store<any>) {}
 
@@ -42,15 +45,14 @@ export class UserTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-
     // fetch users on search
     fromEvent(this.input.nativeElement, 'keyup')
       .pipe(
         debounceTime(150),
         distinctUntilChanged(),
         tap(() => {
-            this.paginator.pageIndex = 0;
-            this.fetchUsers();
+          this.paginator.pageIndex = 0;
+          this.fetchUsers();
         })
       )
       .subscribe();
@@ -60,14 +62,14 @@ export class UserTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.paginator.pageIndex = 0;
     });
 
-
     // on sort or pagination then fetch users
     this.watchChangesSub = merge(this.sort.sortChange, this.paginator.page)
       .pipe(
         tap(() => {
           this.fetchUsers();
         })
-      ).subscribe();
+      )
+      .subscribe();
   }
 
   // dispatch action to fetch users
@@ -83,7 +85,12 @@ export class UserTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.sortSub.unsubscribe();
-    this.watchChangesSub.unsubscribe();
+    if (this.sortSub) {
+      this.sortSub.unsubscribe();
+    }
+
+    if (this.watchChangesSub) {
+      this.watchChangesSub.unsubscribe();
+    }
   }
 }

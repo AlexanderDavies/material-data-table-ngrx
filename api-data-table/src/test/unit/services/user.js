@@ -1,29 +1,28 @@
-const expect = require("chai").expect;
-const { stub } = require("sinon");
-const _ = require("lodash");
+const expect = require('chai').expect;
+const { stub } = require('sinon');
 
-const User = require("../../../models/user");
+const User = require('../../../models/user');
+const userService = require('../../../services/user');
 
-const userService = require("../../../services/user");
-
-describe("Service: User", function() {
-  let findUserStub;
+describe('Service: User', function() {
+  let findUsersStub;
   let findOneUserStub;
   let saveUserStub;
   let countUsersStub;
-  const _user = {
-    _id: "1234",
-    email: "test@test.com",
-    firstName: "Test",
-    surname: "User",
-    role: "General"
-  };
+  let user;
 
   beforeEach(() => {
-    findUsersStub = stub(User, "find");
-    findOneUserStub = findOneUserStub = stub(User, "findOne");
-    saveUserStub = stub(User.prototype, "save");
-    countUsersStub = stub(User, "countDocuments");
+    findUsersStub = stub(User, 'find');
+    findOneUserStub = findOneUserStub = stub(User, 'findOne');
+    saveUserStub = stub(User.prototype, 'save');
+    countUsersStub = stub(User, 'countDocuments');
+    user = {
+      _id: '1234',
+      email: 'test@test.com',
+      firstName: 'Test',
+      surname: 'User',
+      role: 'General'
+    };
   });
 
   afterEach(() => {
@@ -33,10 +32,8 @@ describe("Service: User", function() {
     countUsersStub.restore();
   });
 
-  describe("Create User", function() {
-    it("should return the user if user was saved to the DB", async function() {
-      const user = _.cloneDeep(_user);
-
+  describe('Create User', function() {
+    it('should return the user if user was saved to the DB', async () => {
       saveUserStub.resolves(user);
 
       const result = await userService.createUser({
@@ -49,27 +46,25 @@ describe("Service: User", function() {
       expect(result).to.deep.equal(user);
     });
 
-    it("should throw an error if unable to save user", async function() {
-      try {
-        const user = _.cloneDeep(_user);
+    it('should throw an error if unable to save user', done => {
+      saveUserStub.rejects(new Error('unable to save user'));
 
-        saveUserStub.rejects(new Error("unable to save user"));
-
-        await userService.createUser({
+      userService
+        .createUser({
           email: user.email,
           firstName: user.firstName,
           surname: user.surname,
           role: user.role
+        })
+        .catch(err => {
+          expect(err.message).to.equal('unable to save user');
+          done();
         });
-      } catch (err) {
-        expect(err.message).to.equal("unable to save user");
-      }
     });
   });
 
-  describe("Get Users", async function() {
-    it("should return users even if empty object is passed", async function() {
-      const user = _.cloneDeep(_user);
+  describe('Get Users', async function() {
+    it('should return users even if empty object is passed', async () => {
       findUsersStub.resolves([user]);
 
       const result = await userService.getUsers({});
@@ -77,7 +72,7 @@ describe("Service: User", function() {
       expect(result).to.deep.equal([user]);
     });
 
-    it("should return an empty array if no users found", async function() {
+    it('should return an empty array if no users found', async () => {
       findUsersStub.resolves([]);
 
       const result = await userService.getUsers({});
@@ -85,19 +80,18 @@ describe("Service: User", function() {
       expect(result).to.deep.equal([]);
     });
 
-    it("should throw an error if error in fetching users from DB", async function() {
-      try {
-        findUsersStub.rejects(new Error("db error"));
+    it('should throw an error if error in fetching users from DB', () => {
+      findUsersStub.rejects(new Error('db error'));
 
-        await userService.getUsers({});
-      } catch (err) {
+      userService.getUsers({}).catch(err => {
         expect(err.message).to.equal('db error');
-      }
+        done;
+      });
     });
   });
 
-  describe("Get User Count", async function() {
-    it("should return the user count if users is greater than one", async function() {
+  describe('Get User Count', () => {
+    it('should return the user count if users is greater than one', async () => {
       countUsersStub.resolves(1);
 
       const result = await userService.getUserCount();
@@ -105,20 +99,18 @@ describe("Service: User", function() {
       expect(result).to.equal(1);
     });
 
-    it("should throw an error if error fetching user count from the DB", async function() {
-      try {
-        countUsersStub.rejects(new Error("db error"));
+    it('should throw an error if error fetching user count from the DB', done => {
+      countUsersStub.rejects(new Error('db error'));
 
-        await userService.getUserCount();
-      
-      } catch (err) {
+      userService.getUserCount().catch(err => {
         expect(err.message).to.equal('db error');
-      }
+        done();
+      });
     });
   });
-  describe("Get User", async function() {
-    it("should return the user", async function() {
-      const user = _.clone(_user);
+
+  describe('Get User', () => {
+    it('should return the user', async () => {
       findOneUserStub.resolves(user);
 
       const result = await userService.getUser(user.email);
@@ -126,16 +118,13 @@ describe("Service: User", function() {
       expect(result).to.deep.equal(user);
     });
 
-    it("should throw an error if error fetching the user from the db", async function() {
-      try {
-        const user = _.clone(_user);
-        findOneUserStub.rejects(new Error("db error"));
+    it('should throw an error if error fetching the user from the db', done => {
+      findOneUserStub.rejects(new Error('db error'));
 
-        await userService.getUser(user.email);
-
-      } catch(err) {
-        expect(err.message).to.equal("db error");
-      }
+      userService.getUser(user.email).catch(err => {
+        expect(err.message).to.equal('db error');
+        done();
+      });
     });
   });
 });

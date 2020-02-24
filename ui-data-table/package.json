@@ -27,6 +27,7 @@
     "@ngrx/effects": "^8.6.0",
     "@ngrx/entity": "^8.6.0",
     "@ngrx/store": "^8.6.0",
+    "@ngx-translate/core": "^12.1.1",
     "@schematics/angular": "^9.0.1",
     "flex-layout": "^1.0.1",
     "lodash": "^4.17.15",
