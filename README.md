@@ -1,6 +1,6 @@
 # MaterialDataTableNgrx
 
-This project is a demo of the angular material data table featuring ngrx state management with node + mongo server side filtering, sorting and pagination. The traditional approach to solving this problem involves creating an custom CDK Data Source. A guide to that approach can be found here `https://blog.angular-university.io/angular-material-data-table/`. This repo demonstrates an alternative 'store' based approach.
+This project is a demo of the angular material data table featuring ngrx state management with node + mongo server side filtering, sorting and pagination. The traditional approach to solving this problem involves creating a DataSource. A guide to that approach can be found here `https://blog.angular-university.io/angular-material-data-table/`. This repo simply demonstrates an alternative 'store' based approach.
 
 ### Installing
 
@@ -14,9 +14,13 @@ This project is a demo of the angular material data table featuring ngrx state m
     - MONGO_USER_NAME=test_user
     - MONGO_PWORD=ngrxdatatabletest
     - MONGO_DB=localhost:27017/test
+- execute the command `cd api-data-table`
+- run `npm install` or `yarn add` to install dependencies
 - run `npm serve` or `npm run start:server` for hot reloading
 
 # Angular
+- execute the command `cd api-data-table`
+- run `npm install` or `yarn add` to install dependencies
 - Run `ng serve` for a dev server. 
 - Navigate to `http://localhost:4200/`
 
@@ -36,3 +40,5 @@ angular 9.0.1
 
 see package.json.
 
+## notes
+This version does not support the caching of pagination but this could be extended
