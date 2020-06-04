@@ -7,8 +7,8 @@
 ./ui-data-table/node_modules
 
 # Node
-./api/.env
-./api/nodemon.json
-./api/.vscode
-./api/.nyc_output
-./api/node_modules
+./api-data-table/.env
+./api-data-table/nodemon.json
+./api-data-table/.vscode
+./api-data-table/.nyc_output
+./api-data-table/node_modules
