@@ -4,13 +4,11 @@
 ./ui-data-table/out-tsc
 ./ui-data-table/chrome-profiler-events*.json
 ./ui-data-table/speed-measure-plugin*.json
+./ui-data-table/node_modules
 
 # Node
 ./api/.env
 ./api/nodemon.json
 ./api/.vscode
 ./api/.nyc_output
-
-# dependencies
-node_modules*
-git 
+./api/node_modules
