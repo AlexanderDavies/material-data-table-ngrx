@@ -1,5 +1,5 @@
 const expect = require("chai").expect;
-const sinon = require("sinon");
+const sandbox = require("sinon").createSandbox();
 const validator = require("express-validator");
 
 const { validateErrors } = require("../../../utils/validate-errors");
@@ -8,11 +8,11 @@ describe("Util: Validate Errors", function() {
   let validatorStub;
 
   beforeEach(() => {
-    validatorStub = sinon.stub(validator, "validationResult");
+    validatorStub = sandbox.stub(validator, "validationResult");
   });
 
   afterEach(() => {
-    validatorStub.restore();
+    sandbox.restore();
   });
 
   it("should throw an error if errors object is not null", function() {

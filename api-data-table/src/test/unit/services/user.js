@@ -1,10 +1,10 @@
 const expect = require('chai').expect;
-const { stub } = require('sinon');
+const sandbox = require('sinon').createSandbox();
 
 const User = require('../../../models/user');
 const userService = require('../../../services/user');
 
-describe('Service: User', function() {
+describe('Service: User', function () {
   let findUsersStub;
   let findOneUserStub;
   let saveUserStub;
@@ -12,10 +12,10 @@ describe('Service: User', function() {
   let user;
 
   beforeEach(() => {
-    findUsersStub = stub(User, 'find');
-    findOneUserStub = findOneUserStub = stub(User, 'findOne');
-    saveUserStub = stub(User.prototype, 'save');
-    countUsersStub = stub(User, 'countDocuments');
+    findUsersStub = sandbox.stub(User, 'find');
+    findOneUserStub = findOneUserStub = sandbox.stub(User, 'findOne');
+    saveUserStub = sandbox.stub(User.prototype, 'save');
+    countUsersStub = sandbox.stub(User, 'countDocuments');
     user = {
       _id: '1234',
       email: 'test@test.com',
@@ -26,13 +26,10 @@ describe('Service: User', function() {
   });
 
   afterEach(() => {
-    findUsersStub.restore();
-    findOneUserStub.restore();
-    saveUserStub.restore();
-    countUsersStub.restore();
+    sandbox.restore();
   });
 
-  describe('Create User', function() {
+  describe('Create User', function () {
     it('should return the user if user was saved to the DB', async () => {
       saveUserStub.resolves(user);
 
@@ -63,7 +60,7 @@ describe('Service: User', function() {
     });
   });
 
-  describe('Get Users', async function() {
+  describe('Get Users', async function () {
     it('should return users even if empty object is passed', async () => {
       findUsersStub.resolves([user]);
 
@@ -80,12 +77,12 @@ describe('Service: User', function() {
       expect(result).to.deep.equal([]);
     });
 
-    it('should throw an error if error in fetching users from DB', () => {
+    it('should throw an error if error in fetching users from DB', done => {
       findUsersStub.rejects(new Error('db error'));
 
       userService.getUsers({}).catch(err => {
         expect(err.message).to.equal('db error');
-        done;
+        done();
       });
     });
   });

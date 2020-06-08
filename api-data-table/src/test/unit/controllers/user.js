@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const sinon = require('sinon');
+const sandbox = require('sinon').createSandbox();
 
 const userService = require('../../../services/user');
 const userController = require('../../../controllers/user');
@@ -15,10 +15,10 @@ describe('Controllers: User', function() {
   let next;
 
   beforeEach(() => {
-    createUserStub = sinon.stub(userService, 'createUser');
-    getUsersStub = sinon.stub(userService, 'getUsers');
-    getUserCountStub = sinon.stub(userService, 'getUserCount');
-    validateErrorsStub = sinon.stub(validateErrorsUtil, 'validateErrors');
+    createUserStub = sandbox.stub(userService, 'createUser');
+    getUsersStub = sandbox.stub(userService, 'getUsers');
+    getUserCountStub = sandbox.stub(userService, 'getUserCount');
+    validateErrorsStub = sandbox.stub(validateErrorsUtil, 'validateErrors');
     user = {
       _id: 1,
       email: 'test@test.com.au',
@@ -50,10 +50,7 @@ describe('Controllers: User', function() {
   });
 
   afterEach(() => {
-    createUserStub.restore();
-    getUsersStub.restore();
-    getUserCountStub.restore();
-    validateErrorsStub.restore();
+    sandbox.restore();
   });
 
   describe('Create User Controller', function() {
